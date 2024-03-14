@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'app_color.dart';
 
-class Appinfo {
+class AppInfo {
   static success(BuildContext context, String message) {
     return ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
