@@ -92,16 +92,70 @@ class _HomeAdminPageState extends State<HomeAdminPage> {
               if (tasks.isEmpty) {
                 return const Center(child: Text('Empty'));
               }
-              return const Column(
-                children: [
-                  Text('success')
-                ],
+              return Column(
+                children: List.generate(tasks.length, (index) {
+
+                  return buildItemNeedReview(tasks[index]);
+                })
               );
             }
             return const SizedBox.shrink();
           },
         )
       ],
+    );
+  }
+
+  Widget buildItemNeedReview(Task task) {
+    return Container(
+      margin: const EdgeInsets.only(top: 20),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(10),
+      ),
+      padding: const EdgeInsets.all(16),
+      child: Row(
+        children: [
+          ClipRRect(
+            borderRadius: BorderRadius.circular(40),
+            child: Image.asset(
+              'assets/profile.png',
+              width: 40,
+              height: 40,
+            ),
+          ),
+          const Gap(16),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  task.title ?? '',
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: TextStyle(
+                    color: AppColor.textTitle,
+                    fontSize: 16,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                const Gap(4),
+                Text(
+                  task.user?.name ?? '',
+                  style: TextStyle(
+                    color: AppColor.textBody,
+                    fontSize: 12,
+                  ),
+                )
+              ],
+            ),
+          ),
+          const Icon(
+            Icons.navigate_next,
+            color: Colors.black,
+          )
+        ],
+      ),
     );
   }
 
