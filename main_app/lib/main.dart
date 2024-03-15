@@ -8,7 +8,10 @@ import 'package:main_app/presentation/bloc/login/login_cubit.dart';
 import 'package:main_app/presentation/bloc/user/user_cubit.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:d_session/d_session.dart';
+import 'package:main_app/presentation/pages/add_employee_page.dart';
+import 'package:main_app/presentation/pages/home_admin_page.dart';
 import 'package:main_app/presentation/pages/login_page.dart';
+import 'package:main_app/presentation/pages/profile_page.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
@@ -66,18 +69,18 @@ class MainApp extends StatelessWidget {
                 if (snapshot.data == null) return const LoginPage();
                 User user = User.fromJson(Map.from(snapshot.data!));
                 context.read<UserCubit>().update(user);
-                if (user.role == "Admin") return const Scaffold(); //home admin
+                if (user.role == "Admin") return const HomeAdminPage();
                 return const Scaffold(); //home employee
               }
             );
           },
-          AppRoute.addEmployee: (context) => const Scaffold(),
+          AppRoute.addEmployee: (context) => const AddEmployeePage(),
           AppRoute.addTask: (context) => const Scaffold(),
           AppRoute.detailTask: (context) => const Scaffold(),
           AppRoute.listTask: (context) => const Scaffold(),
           AppRoute.login: (context) => const LoginPage(),
           AppRoute.monitorEmployee: (context) => const Scaffold(),
-          AppRoute.profile: (context) => const Scaffold(),
+          AppRoute.profile: (context) => const ProfilePage(),
         },
       ),
     );
