@@ -5,6 +5,7 @@ import 'package:main_app/common/app_color.dart';
 import 'package:main_app/common/app_route.dart';
 import 'package:main_app/data/models/users.dart';
 import 'package:main_app/presentation/bloc/login/login_cubit.dart';
+import 'package:main_app/presentation/bloc/need_review/need_review_bloc.dart';
 import 'package:main_app/presentation/bloc/user/user_cubit.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:d_session/d_session.dart';
@@ -31,6 +32,7 @@ class MainApp extends StatelessWidget {
       providers: [
         BlocProvider(create: (context) => UserCubit()),
         BlocProvider(create: (context) => LoginCubit()),
+        BlocProvider(create: (context) => NeedReviewBloc()),
       ],
       child: MaterialApp(
         debugShowCheckedModeBanner: false,

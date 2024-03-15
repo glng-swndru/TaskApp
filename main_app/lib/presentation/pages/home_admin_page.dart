@@ -1,10 +1,15 @@
 import 'package:d_button/d_button.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 import 'package:gap/gap.dart';
+import 'package:main_app/common/app_color.dart';
 import 'package:main_app/common/app_route.dart';
+import 'package:main_app/common/enums.dart';
+import 'package:main_app/data/models/task.dart';
 import 'package:main_app/data/models/users.dart';
+import 'package:main_app/presentation/bloc/need_review/need_review_bloc.dart';
 import 'package:main_app/presentation/bloc/user/user_cubit.dart';
 
 class HomeAdminPage extends StatefulWidget {
@@ -15,6 +20,20 @@ class HomeAdminPage extends StatefulWidget {
 }
 
 class _HomeAdminPageState extends State<HomeAdminPage> {
+  getNeedReview() {
+    context.read<NeedReviewBloc>().add(OnFetchNeedReview());
+  }
+
+  refresh() {
+    getNeedReview();
+  }
+
+  @override
+  void initState() {
+    refresh();
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -24,14 +43,65 @@ class _HomeAdminPageState extends State<HomeAdminPage> {
             children: [
               buildHeader(),
               Positioned(
-                  left: 20,
-                  right: 20,
-                  bottom: 0,
-                  child: buildButtonAddEmployee()),
+                left: 20,
+                right: 20,
+                bottom: 0,
+                child: buildButtonAddEmployee(),
+              ),
             ],
           ),
+          Expanded(
+            child: RefreshIndicator(
+              onRefresh: () async => refresh(),
+              child: ListView(
+                padding: const EdgeInsets.all(20),
+                children: [
+                  const Gap(20),
+                  buildNeedReview(),
+                ],
+              ),
+            ),
+          )
         ],
       ),
+    );
+  }
+
+  Widget buildNeedReview() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          'Need to be reviewed',
+          style: GoogleFonts.montserrat(
+            color: AppColor.textTitle,
+            fontSize: 20,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+        BlocBuilder<NeedReviewBloc, NeedReviewState>(
+          builder: (context, state) {
+            if (state.requestStatus == RequestStatus.loading) {
+              return const Center(child: CircularProgressIndicator());
+            }
+            if (state.requestStatus == RequestStatus.failed) {
+              return const Center(child: Text('Something wrong'));
+            }
+            if (state.requestStatus == RequestStatus.success) {
+              List<Task> tasks = state.tasks;
+              if (tasks.isEmpty) {
+                return const Center(child: Text('Empty'));
+              }
+              return const Column(
+                children: [
+                  Text('success')
+                ],
+              );
+            }
+            return const SizedBox.shrink();
+          },
+        )
+      ],
     );
   }
 
