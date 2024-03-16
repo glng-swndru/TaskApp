@@ -1,19 +1,30 @@
-import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:main_app/common/app_color.dart';
 import 'package:main_app/common/app_route.dart';
 import 'package:main_app/data/models/users.dart';
+import 'package:main_app/presentation/bloc/detail_task/detail_task_cubit.dart';
 import 'package:main_app/presentation/bloc/employee/employee_bloc.dart';
-import 'package:main_app/presentation/bloc/login/login_cubit.dart';
+import 'package:main_app/presentation/bloc/list_task/list_task_bloc.dart';
 import 'package:main_app/presentation/bloc/need_review/need_review_bloc.dart';
+import 'package:main_app/presentation/bloc/progress_task/progress_task_bloc.dart';
+import 'package:main_app/presentation/bloc/stat_employee/stat_employee_cubit.dart';
 import 'package:main_app/presentation/bloc/user/user_cubit.dart';
-import 'package:google_fonts/google_fonts.dart';
-import 'package:d_session/d_session.dart';
 import 'package:main_app/presentation/pages/add_employee_page.dart';
+import 'package:main_app/presentation/pages/add_task_page.dart';
+import 'package:main_app/presentation/pages/detail_task_page.dart';
 import 'package:main_app/presentation/pages/home_admin_page.dart';
+import 'package:main_app/presentation/pages/home_employee_page.dart';
+import 'package:main_app/presentation/pages/list_task_page.dart';
 import 'package:main_app/presentation/pages/login_page.dart';
+import 'package:main_app/presentation/pages/monitor_employee_page.dart';
 import 'package:main_app/presentation/pages/profile_page.dart';
+
+import 'package:d_session/d_session.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:google_fonts/google_fonts.dart';
+
+import 'presentation/bloc/login/login_cubit.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
@@ -35,6 +46,8 @@ class MainApp extends StatelessWidget {
         BlocProvider(create: (context) => LoginCubit()),
         BlocProvider(create: (context) => NeedReviewBloc()),
         BlocProvider(create: (context) => EmployeeBloc()),
+        BlocProvider(create: (context) => StatEmployeeCubit()),
+        BlocProvider(create: (context) => ProgressTaskBloc()),
       ],
       child: MaterialApp(
         debugShowCheckedModeBanner: false,
@@ -62,28 +75,49 @@ class MainApp extends StatelessWidget {
           dialogTheme: const DialogTheme(
             surfaceTintColor: Colors.white,
             backgroundColor: Colors.white,
-          )
+          ),
         ),
         initialRoute: AppRoute.home,
         routes: {
           AppRoute.home: (context) {
             return FutureBuilder(
-              future: DSession.getUser(), 
+              future: DSession.getUser(),
               builder: (context, snapshot) {
                 if (snapshot.data == null) return const LoginPage();
                 User user = User.fromJson(Map.from(snapshot.data!));
                 context.read<UserCubit>().update(user);
                 if (user.role == "Admin") return const HomeAdminPage();
-                return const Scaffold(); //home employee
-              }
+                return const HomeEmployePage();
+              },
             );
           },
           AppRoute.addEmployee: (context) => const AddEmployeePage(),
-          AppRoute.addTask: (context) => const Scaffold(),
-          AppRoute.detailTask: (context) => const Scaffold(),
-          AppRoute.listTask: (context) => const Scaffold(),
+          AppRoute.addTask: (context) {
+            User employee = ModalRoute.of(context)!.settings.arguments as User;
+            return AddTaskPage(employee: employee);
+          },
+          AppRoute.detailTask: (context) {
+            int id = ModalRoute.of(context)!.settings.arguments as int;
+            return BlocProvider(
+              create: (context) => DetailTaskCubit(),
+              child: DetailTaskPage(id: id),
+            );
+          },
+          AppRoute.listTask: (context) {
+            Map data = ModalRoute.of(context)!.settings.arguments as Map;
+            return BlocProvider(
+              create: (context) => ListTaskBloc(),
+              child: ListTaskPage(
+                status: data['status'],
+                employee: data['employee'],
+              ),
+            );
+          },
           AppRoute.login: (context) => const LoginPage(),
-          AppRoute.monitorEmployee: (context) => const Scaffold(),
+          AppRoute.monitorEmployee: (context) {
+            User employee = ModalRoute.of(context)!.settings.arguments as User;
+            return MonitorEmployeePage(employee: employee);
+          },
           AppRoute.profile: (context) => const ProfilePage(),
         },
       ),

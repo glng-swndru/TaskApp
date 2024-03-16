@@ -1,6 +1,6 @@
+import 'package:main_app/common/app_color.dart';
 import 'package:d_button/d_button.dart';
 import 'package:flutter/material.dart';
-import 'package:main_app/common/app_color.dart';
 
 class AppButton {
   static Widget primary(String title, VoidCallback? onClick) {

@@ -1,15 +1,26 @@
-import 'package:d_input/d_input.dart';
-import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:main_app/common/app_color.dart';
 import 'package:main_app/common/app_info.dart';
 import 'package:main_app/common/app_route.dart';
-import 'package:main_app/common/enums.dart';
-import 'package:main_app/presentation/bloc/login/login_cubit.dart';
+import 'package:main_app/data/source/user_source.dart';
 import 'package:main_app/presentation/widgets/app_button.dart';
+import 'package:d_input/d_input.dart';
+import 'package:d_session/d_session.dart';
+import 'package:flutter/material.dart';
 
 class LoginPage extends StatelessWidget {
   const LoginPage({super.key});
+
+  login(String email, String password, BuildContext context) {
+    UserSource.login(email, password).then((result) {
+      if (result == null) {
+        AppInfo.success(context, 'Login Success');
+      } else {
+        AppInfo.success(context, 'Login Failed');
+        DSession.setUser(result.toJson());
+        Navigator.pushNamed(context, AppRoute.home);
+      }
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -39,27 +50,30 @@ class LoginPage extends StatelessWidget {
                   hint: 'password',
                 ),
                 const SizedBox(height: 20),
-                BlocConsumer<LoginCubit, LoginState>(
-                  listener: (context, state) {
-                    if (state.requestStatus == RequestStatus.failed) {
-                      AppInfo.failed(context, 'Login Failed');
-                    }
-                    if (state.requestStatus == RequestStatus.success) {
-                      AppInfo.success(context, 'Login Success');
-                      Navigator.pushNamed(context, AppRoute.home);
-                    }
-                  },
-                  builder: (context, state) {
-                    if (state.requestStatus == RequestStatus.failed) {
-                      return const Center(child: CircularProgressIndicator());
-                    }
-                    return AppButton.primary('LOGIN', () {
-                      context
-                          .read<LoginCubit>()
-                          .clickLogin(edtEmail.text, edtPassword.text);
-                    });
-                  },
-                ),
+                // BlocConsumer<LoginCubit, LoginState>(
+                //   listener: (context, state) {
+                //     // if (state.requestStatus == RequestStatus.failed) {
+                //     //   AppInfo.failed(context, 'Login Failed');
+                //     // }
+                //     // if (state.requestStatus == RequestStatus.success) {
+                //     //     AppInfo.success(context, 'Login Success');
+                //     //   Navigator.pushNamed(context, AppRoute.home);
+                //     // }
+                //   },
+                //   builder: (context, state) {
+                //     if (state.requestStatus == RequestStatus.loading) {
+                //       return const Center(child: CircularProgressIndicator());
+                //     }
+                //     return AppButton.primary('LOGIN', () {
+                //       context
+                //           .read<LoginCubit>()
+                //           .clickLogin(edtEmail.text, edtPassword.text);
+                //     });
+                //   },
+                // ),
+                AppButton.primary('LOGIN', () {
+                  login(edtEmail.text, edtPassword.text, context);
+                }),
               ],
             ),
           ),
@@ -106,26 +120,30 @@ class LoginPage extends StatelessWidget {
               children: [
                 Image.asset(
                   'assets/logo.png',
-                  height: 110,
-                  width: 110,
+                  height: 120,
+                  width: 120,
                 ),
                 const SizedBox(width: 20),
                 RichText(
-                    text: TextSpan(
-                        text: 'Monitoring\n',
-                        style: TextStyle(
-                          color: AppColor.defaultText,
-                          fontSize: 30,
-                          height: 1.4,
-                        ),
-                        children: const [
+                  text: TextSpan(
+                    text: 'Monitoring\n',
+                    style: TextStyle(
+                      color: AppColor.defaultText,
+                      fontSize: 30,
+                      height: 1.4,
+                    ),
+                    children: const [
                       TextSpan(text: 'with '),
                       TextSpan(
-                          text: 'TaskApp ',
-                          style: TextStyle(
-                              color: Colors.black,
-                              fontWeight: FontWeight.bold)),
-                    ]))
+                        text: 'Tusk ',
+                        style: TextStyle(
+                          color: Colors.black,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
               ],
             ),
           ),

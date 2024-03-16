@@ -10,7 +10,7 @@ class EmployeeBloc extends Bloc<EmployeeEvent, EmployeeState> {
   EmployeeBloc() : super(EmployeeInitial()) {
     on<OnFetchEmployee>((event, emit) async {
       emit(EmployeeLoading());
-      List<User>? result = await UserSource.getEmployee();
+      List<User>? result = await UserSource.getEmlpoyee();
       if (result == null) {
         emit(EmployeeFailed('Something wrong'));
       } else {

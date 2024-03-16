@@ -7,7 +7,7 @@ class AppColor {
   static Color rejected = const Color(0xffFA4D75);
 
   static Color scaffold = const Color(0xffE1E1E1);
-  static Color primary = const Color(0xffFF9c40);
+  static Color primary = const Color(0xff378ce7);
   static Color secondary = const Color(0xffFFDEC0);
 
   static Color defaultText = const Color(0xff2C2C2C);

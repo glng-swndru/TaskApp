@@ -1,5 +1,5 @@
-import 'package:intl/intl.dart';
 import 'package:main_app/data/models/task.dart';
+import 'package:intl/intl.dart';
 
 String dateByStatus(Task task) {
   switch (task.status) {
