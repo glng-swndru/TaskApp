@@ -9,8 +9,10 @@ import 'package:main_app/common/app_route.dart';
 import 'package:main_app/common/enums.dart';
 import 'package:main_app/data/models/task.dart';
 import 'package:main_app/data/models/users.dart';
+import 'package:main_app/presentation/bloc/employee/employee_bloc.dart';
 import 'package:main_app/presentation/bloc/need_review/need_review_bloc.dart';
 import 'package:main_app/presentation/bloc/user/user_cubit.dart';
+import 'package:main_app/presentation/widgets/failed_ui.dart';
 
 class HomeAdminPage extends StatefulWidget {
   const HomeAdminPage({super.key});
@@ -24,8 +26,13 @@ class _HomeAdminPageState extends State<HomeAdminPage> {
     context.read<NeedReviewBloc>().add(OnFetchNeedReview());
   }
 
+  getEmployee() {
+    context.read<EmployeeBloc>().add(OnFetchEmployee());
+  }
+
   refresh() {
     getNeedReview();
+    getEmployee();
   }
 
   @override
@@ -81,16 +88,23 @@ class _HomeAdminPageState extends State<HomeAdminPage> {
         ),
         BlocBuilder<NeedReviewBloc, NeedReviewState>(
           builder: (context, state) {
-            if (state.requestStatus == RequestStatus.loading) {
+             if (state.requestStatus == RequestStatus.loading) {
               return const Center(child: CircularProgressIndicator());
             }
             if (state.requestStatus == RequestStatus.failed) {
-              return const Center(child: Text('Something wrong'));
+              return const FailedUI(
+                margin: EdgeInsets.only(top: 20),
+                message: 'Something wrong',
+                );
             }
             if (state.requestStatus == RequestStatus.success) {
               List<Task> tasks = state.tasks;
               if (tasks.isEmpty) {
-                return const Center(child: Text('Empty'));
+                return const FailedUI(
+                  margin: EdgeInsets.only(top: 20),
+                  icon: Icons.list,
+                  message: 'There is no need review',
+                );
               }
               return Column(
                 children: List.generate(tasks.length, (index) {

@@ -65,9 +65,9 @@ class UserSource {
     }
   }
 
-  static Future<List<User>?> getEmployee(String email,String password) async {
+  static Future<List<User>?> getEmployee() async {
     try{
-      final response = await http.post(
+      final response = await http.get(
         Uri.parse('$_baseURL/Employee'),
       );
       DMethod.logResponse(response);

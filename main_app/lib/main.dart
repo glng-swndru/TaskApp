@@ -4,6 +4,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:main_app/common/app_color.dart';
 import 'package:main_app/common/app_route.dart';
 import 'package:main_app/data/models/users.dart';
+import 'package:main_app/presentation/bloc/employee/employee_bloc.dart';
 import 'package:main_app/presentation/bloc/login/login_cubit.dart';
 import 'package:main_app/presentation/bloc/need_review/need_review_bloc.dart';
 import 'package:main_app/presentation/bloc/user/user_cubit.dart';
@@ -33,6 +34,7 @@ class MainApp extends StatelessWidget {
         BlocProvider(create: (context) => UserCubit()),
         BlocProvider(create: (context) => LoginCubit()),
         BlocProvider(create: (context) => NeedReviewBloc()),
+        BlocProvider(create: (context) => EmployeeBloc()),
       ],
       child: MaterialApp(
         debugShowCheckedModeBanner: false,
